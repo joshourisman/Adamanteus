@@ -71,6 +71,8 @@ class MySQLDumper(Dumper):
 
     def dump(self):
         # mysqldump -u 'username' -ppassword --opt database > $FILENAME
+        output_file = "%s/%s.sql" % (self.path, self.database)
+        
         dump_options = ['mysqldump']
         if self.username is not None:
             dump_options.append("-u%s" % string.strip(self.username))
@@ -78,6 +80,7 @@ class MySQLDumper(Dumper):
             dump_options.append('-p%s' % self.password)
         dump_options.append('--opt')
         dump_options.append(self.database)
+        dump_options.append('--result-file=%s' % output_file)
         call(dump_options)
             
 def main():
