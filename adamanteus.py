@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import optparse
 import sys
+import string
 from subprocess import call
 from mercurial import hg, ui
 from mercurial.error import RepoError
@@ -15,6 +16,8 @@ class Dumper(object):
     def __init__(self, backend, options):
         self.backend = backend
         self.database = options.database
+        self.username = options.username
+        self.password = options.password
         
         if options.repository is not None:
             self.path = options.repository
@@ -60,9 +63,26 @@ class MongoDumper(Dumper):
         dump_options = ['mongodump', '--out=%s' % self.path, self.database]
 
         call(dump_options)
+
+class MySQLDumper(Dumper):
+    """
+    Subclass of Dumper for working with MySQL databases.
+    """
+
+    def dump(self):
+        # mysqldump -u 'username' -ppassword --opt database > $FILENAME
+        dump_options = ['mysqldump']
+        if self.username is not None:
+            dump_options.append("-u%s" % string.strip(self.username))
+        if self.password is not None:
+            dump_options.append('-p%s' % self.password)
+        dump_options.append('--opt')
+        dump_options.append(self.database)
+        print dump_options
+        call(dump_options)
             
 def main():
-    usage = "usage: %prog -b BACKEND -d DATABASE [-r repository]"
+    usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
                               prog='adamanteus',
                               version='adamanteus 0.1a',
@@ -71,10 +91,15 @@ def main():
                  help="The name of the database to be backed up.")
     p.add_option('--repository', '-r', default=None,
                  help="The mercurial repository to be backed up to.")
+    p.add_option('-u', default=None, dest='username',
+                 help="The username to use with the database.")
+    p.add_option('--password', '-p', default=None,
+                 help="The password to use with the database.")
     options, arguments = p.parse_args()
 
     DUMPERS = {
         'mongodb': MongoDumper,
+        'mysql': MySQLDumper,
         }
 
     if len(arguments) != 1:
