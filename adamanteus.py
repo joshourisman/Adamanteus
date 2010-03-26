@@ -62,10 +62,6 @@ class MongoDumper(Dumper):
             dump_options.append('--db=%s' % self.database)
 
         call(dump_options)
-
-DUMPERS = {
-    'mongodb': MongoDumper,
-    }
             
 def main():
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
@@ -76,6 +72,10 @@ def main():
     p.add_option('--database', '-d', default=None)
     p.add_option('--repository', '-r', default=None)
     options, arguments = p.parse_args()
+
+    DUMPERS = {
+        'mongodb': MongoDumper,
+        }
 
     if options.backend not in DUMPERS.keys():
         print >> sys.stderr, '%s is not currently a supported database backend.' % options.backend
