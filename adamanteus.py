@@ -41,6 +41,19 @@ def main():
 
     call(dump_options)
 
+    status = r.status(unknown=True)
+    unknown = status[4]
+    missing = status[3]
+
+    if len(unknown):
+        print "Adding %d files to repo..." % len(unknown)
+        r.add(unknown)
+    if len(missing):
+        print "Removing %d missing files from repo..." % len(unknown)
+        r.remove(missing)
+    if len(r.status()[0]) or len(r.status()[1]):
+        rev = r.commit()
+
 if __name__ == '__main__':
     main()
 
