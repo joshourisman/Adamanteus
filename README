@@ -1,0 +1,30 @@
+.. -*-restructuredtext-*-
+
+==========
+Adamanteus
+==========
+
+Adamanteus is a python tool to provide advanced optiosn for backing up your
+databases in a simple manner.
+
+
+Requirements
+------------
+The following libraries are required::
+
+- mercurial
+
+Usage
+-----
+adamanteus BACKEND -d DATABASE [-r repository] [-u username] [-p password]
+
+Currently supported database backends are:
+1. MongoDB
+2. MySQL
+
+Future Plans
+------------
+1. PostgreSQL support
+2. Restoring from versioned backup
+3. Automated cloning/pushing/pulling of backup repository.
+
