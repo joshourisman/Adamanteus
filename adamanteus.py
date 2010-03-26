@@ -12,8 +12,8 @@ class Dumper(object):
     different methods of doing the actual dump.
     """
 
-    def __init__(self, options):
-        self.backend = options.backend
+    def __init__(self, backend, options):
+        self.backend = backend
         self.database = options.database
         
         if options.repository is not None:
@@ -64,26 +64,40 @@ class MongoDumper(Dumper):
         call(dump_options)
             
 def main():
+    usage = "usage: %prog -b BACKEND -d DATABASE [-r repository]"
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
                               prog='adamanteus',
                               version='adamanteus 0.1a',
-                              usage='%prog')
-    p.add_option('--backend', '-b', default="mongodb")
-    p.add_option('--database', '-d', default=None)
-    p.add_option('--repository', '-r', default=None)
+                              usage=usage)
+    # p.add_option('--backend', '-b', default="mongodb",
+    #              help="The type of database to be backed up. (Defaults to mongodb.)")
+    p.add_option('--database', '-d', default=None,
+                 help="The name of the database to be backed up.")
+    p.add_option('--repository', '-r', default=None,
+                 help="The mercurial repository to be backed up to.")
     options, arguments = p.parse_args()
 
     DUMPERS = {
         'mongodb': MongoDumper,
         }
 
-    if options.backend not in DUMPERS.keys():
-        print >> sys.stderr, '%s is not currently a supported database backend.' % options.backend
-        print >> sys.stderr, 'Supported backends include: %s.' % ', '.join(DUMPERS.keys())
+    if len(arguments) != 1:
+        p.print_usage()
+        print >> sys.stderr, 'You must specify a database backend.'
         return
     else:
-        dumper = DUMPERS[options.backend](options)
-        dumper()
+        backend = arguments[0]
+    if backend not in DUMPERS.keys():
+        print >> sys.stderr, '%s is not currently a supported database backend.' % backend
+        print >> sys.stderr, 'Supported backends include: %s.' % ', '.join(DUMPERS.keys())
+        return
+    if options.database is None:
+        print p.print_usage()
+        print >> sys.stderr, 'You must specify a database to be backed up.'
+        return
+
+    dumper = DUMPERS[backend](backend, options)
+    dumper()
     
 if __name__ == '__main__':
     main()
