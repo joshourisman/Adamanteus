@@ -60,7 +60,7 @@ class MongoDumper(Dumper):
     def dump(self):
         # For now we need to use mongodump, will switch to
         # mongoexport with MongoDB 1.5
-        dump_options = ['mongodump', '--out=%s' % self.path, self.database]
+        dump_options = ['mongodump', '--out=%s' % self.path, '-d%s' % self.database]
         if self.username is not None:
             dump_options.append('-u %s' % self.username)
         if self.password is not None:
