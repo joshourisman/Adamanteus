@@ -22,7 +22,7 @@ class Dumper(object):
         if options.repository is not None:
             self.path = options.repository
         else:
-            self.path = 'adamanteus_%s_backup' % self.backend
+            self.path = 'adamanteus_%s_%s_backup' % (self.database, self.backend)
         print 'Preparing to back up a %s database to repository %s' % (self.backend, self.path)
 
         try:
