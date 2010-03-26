@@ -19,6 +19,7 @@ Usage
 adamanteus BACKEND -d DATABASE [-r repository] [-u username] [-p password]
 
 Currently supported database backends are:
+
 1. MongoDB
 2. MySQL
 
