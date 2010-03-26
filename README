@@ -28,4 +28,5 @@ Future Plans
 1. PostgreSQL support
 2. Restoring from versioned backup
 3. Automated cloning/pushing/pulling of backup repository.
+4. Integration with Django as a management command.
 
