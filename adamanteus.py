@@ -57,9 +57,7 @@ class MongoDumper(Dumper):
     def dump(self):
         # For now we need to use mongodump, will switch to
         # mongoexport with MongoDB 1.5
-        dump_options = ['mongodump', '--out=%s' % self.path]
-        if self.database is not None:
-            dump_options.append('--db=%s' % self.database)
+        dump_options = ['mongodump', '--out=%s' % self.path, self.database]
 
         call(dump_options)
             
