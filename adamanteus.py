@@ -67,8 +67,6 @@ def main():
                               prog='adamanteus',
                               version='adamanteus 0.1a',
                               usage=usage)
-    # p.add_option('--backend', '-b', default="mongodb",
-    #              help="The type of database to be backed up. (Defaults to mongodb.)")
     p.add_option('--database', '-d', default=None,
                  help="The name of the database to be backed up.")
     p.add_option('--repository', '-r', default=None,
