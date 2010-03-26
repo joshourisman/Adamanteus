@@ -78,7 +78,6 @@ class MySQLDumper(Dumper):
             dump_options.append('-p%s' % self.password)
         dump_options.append('--opt')
         dump_options.append(self.database)
-        print dump_options
         call(dump_options)
             
 def main():
