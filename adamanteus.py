@@ -6,7 +6,7 @@ from mercurial import hg, ui
 from mercurial.error import RepoError
 
 DUMPERS = {
-    'mongodb': 'mongodump',
+    'mongodb': 'mongodump', # For now we need to use mongodump, will switch to mongoexport with MongoDB 1.5
     }
 
 def main():
@@ -19,8 +19,9 @@ def main():
     p.add_option('--repository', '-r', default=None)
     options, arguments = p.parse_args()
 
-    if options.backend != "mongodb":
-        print >> sys.stderr, 'Currently, only MongoDB is supported as a database backend.'
+    if options.backend not in DUMPERS.keys():
+        print >> sys.stderr, '%s is not currently a supported database backend.' % options.backend
+        print >> sys.stderr, 'Supported backends include: %s.' % ', '.join(DUMPERS.keys())
         return
     
     if options.repository is not None:
