@@ -23,7 +23,7 @@ setup(name='Adamanteus',
         'Topic :: System :: Archiving :: Backup',
         'Topic :: Utilities',
         ],
-      platforms=['any'],
-      requires=['mercurial'],
+      platforms=['any',],
+      requires=['mercurial',],
       scripts=['adamanteus.py',],)
 
