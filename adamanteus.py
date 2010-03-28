@@ -81,7 +81,7 @@ class MySQLDumper(Dumper):
             dump_options.append("-u%s" % string.strip(self.username))
         if self.password is not None:
             dump_options.append('-p%s' % self.password)
-        dump_options.append('--opt')
+        dump_options.append('--skip-extended-insert')
         dump_options.append(self.database)
         dump_options.append('--result-file=%s' % output_file)
         call(dump_options)
