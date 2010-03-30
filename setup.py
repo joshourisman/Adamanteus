@@ -3,13 +3,12 @@
 from distutils.core import setup
 
 setup(name='Adamanteus',
-      version='0.2',
+      version='0.2a',
       description='Database Backups with Version Control',
       author='Josh Ourisman',
       author_email='josh@joshourisman.com',
       license='BSD',
       url='http://www.bitbucket.org/Josh/adamanteus/',
-      download_url=("http://bitbucket.org/Josh/adamanteus/get/v0.1.tar.bz2"),
       classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
