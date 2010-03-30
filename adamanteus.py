@@ -73,7 +73,7 @@ class MySQLDumper(Dumper):
     """
 
     def dump(self):
-        # mysqldump -u 'username' -ppassword --opt database > $FILENAME
+        # mysqldump -u 'username' -ppassword --skip-extended-insert database > $FILENAME
         output_file = "%s/%s.sql" % (self.path, self.database)
         
         dump_options = ['mysqldump']
@@ -90,7 +90,7 @@ def main():
     usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
                               prog='adamanteus',
-                              version='adamanteus 0.1a',
+                              version='adamanteus 0.2',
                               usage=usage)
     p.add_option('--database', '-d', default=None,
                  help="The name of the database to be backed up.")
