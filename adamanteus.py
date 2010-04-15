@@ -18,6 +18,7 @@ class Dumper(object):
         self.database = options.database
         self.username = options.username
         self.password = options.password
+        self.mirror = options.mirror
         
         if options.repository is not None:
             self.path = options.repository
@@ -33,6 +34,8 @@ class Dumper(object):
     def __call__(self):
         self.dump()
         self.store()
+        if self.mirror is not None:
+            self.push()
 
     def dump(self):
         raise NotImplementedError("You must subclass Dumper and define "
@@ -51,6 +54,12 @@ class Dumper(object):
             self.repo.remove(missing)
         if len(self.repo.status()[0]) or len(self.repo.status()[1]):
             rev = self.repo.commit()
+
+    def push(self):
+        remote_paths = self.mirror.split(',')
+        for remote_path in remote_paths:
+            remote_repo = hg.repository(ui.ui(), path=remote_path)
+            hg.push(remote_repo)
 
 class MongoDumper(Dumper):
     """
@@ -90,7 +99,7 @@ def main():
     usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
                               prog='adamanteus',
-                              version='adamanteus 0.2a',
+                              version='adamanteus 0.3',
                               usage=usage)
     p.add_option('--database', '-d', default=None,
                  help="The name of the database to be backed up.")
@@ -100,6 +109,8 @@ def main():
                  help="The username to use with the database.")
     p.add_option('--password', '-p', default=None,
                  help="The password to use with the database.")
+    p.add_option('--mirror', '-m', default=None,
+                 help="Remote repository to be used as mirror of backup.")
     options, arguments = p.parse_args()
 
     DUMPERS = {
