@@ -59,7 +59,7 @@ class Dumper(object):
         remote_paths = self.mirror.split(',')
         for remote_path in remote_paths:
             remote_repo = hg.repository(ui.ui(), path=remote_path)
-            hg.push(remote_repo)
+            self.repo.push(remote_repo)
 
 class MongoDumper(Dumper):
     """
@@ -99,7 +99,7 @@ def main():
     usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
                               prog='adamanteus',
-                              version='adamanteus 0.3',
+                              version='adamanteus 0.3a',
                               usage=usage)
     p.add_option('--database', '-d', default=None,
                  help="The name of the database to be backed up.")
