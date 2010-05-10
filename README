@@ -4,7 +4,7 @@
 Adamanteus
 ==========
 
-Adamanteus is a python tool to provide advanced optiosn for backing up your
+Adamanteus is a python tool to provide advanced options for backing up your
 databases in a simple manner.
 
 
@@ -16,7 +16,7 @@ The following libraries are required::
 
 Usage
 -----
-adamanteus BACKEND -d DATABASE [-r repository] [-u username] [-p password]
+adamanteus BACKEND -d DATABASE [-r repository] [-u username] [-p password] [-m remote_repo]
 
 Currently supported database backends are:
 
