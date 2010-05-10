@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='Adamanteus',
-      version='0.3.1',
+      version='0.4',
       description='Database Backups with Version Control',
       author='Josh Ourisman',
       author_email='josh@joshourisman.com',
