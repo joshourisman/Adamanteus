@@ -67,14 +67,28 @@ class MongoDumper(Dumper):
     """
 
     def dump(self):
-        # For now we need to use mongodump, will switch to
-        # mongoexport with MongoDB 1.5
-        dump_options = ['mongodump', '--out=%s' % self.path, '-d%s' % self.database]
-        if self.username is not None:
-            dump_options.append('-u %s' % self.username)
-        if self.password is not None:
-            dump_options.append('-p %s' % self.password)
-        call(dump_options)
+        try:
+            from pymongo.connection import Connection
+            connection = Connection()
+            collections = connection[self.database].collection_names()
+            for collection in collections:
+                dump_options = ['mongoexport', '-d%s' % self.database, '-c%s' % collection]
+                if self.username is not None:
+                    dump_options.append('-u %s' % self.username)
+                if self.password is not None:
+                    dump_options.append('-p %s' % self.password)
+                output_file = "%s/%s.json" % (self.path, collection)
+                dump_options.append('-o%s' % output_file)
+                call(dump_options)
+        except ImportError:
+            # For now we need to use mongodump, will switch to
+            # mongoexport with MongoDB 1.5
+            dump_options = ['mongodump', '--out=%s' % self.path, '-d%s' % self.database]
+            if self.username is not None:
+                dump_options.append('-u %s' % self.username)
+            if self.password is not None:
+                dump_options.append('-p %s' % self.password)
+            call(dump_options)
 
 class MySQLDumper(Dumper):
     """
@@ -99,7 +113,7 @@ def main():
     usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
                               prog='adamanteus',
-                              version='adamanteus 0.3.1',
+                              version='adamanteus 0.4',
                               usage=usage)
     p.add_option('--database', '-d', default=None,
                  help="The name of the database to be backed up.")
