@@ -158,6 +158,7 @@ def main():
     DUMPERS = {
         'mongodb': MongoDumper,
         'mysql': MySQLDumper,
+        'postgres': PostgresDumper,
         }
 
     if len(arguments) != 1:
