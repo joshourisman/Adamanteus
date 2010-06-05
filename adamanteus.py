@@ -132,7 +132,7 @@ Details on using a .pgpass file can be found here: http://www.postgresql.org/doc
         dump_options = ['pg_dump', self.database]
         # options get set here
         if self.username is not None:
-            dump_options.append('-U %s' % string.strip(self.username))
+            dump_options.append('-U%s' % string.strip(self.username))
 
         dump_options.append('--file=%s' % output_file)
         call(dump_options)
