@@ -26,11 +26,11 @@ Currently supported database backends are:
 
 1. MongoDB
 2. MySQL
+3. PostgreSQL
 
 Future Plans
 ------------
-1. PostgreSQL support
-2. Restoring from versioned backup
-3. Automated cloning/pushing/pulling of backup repository.
-4. Integration with Django as a management command.
+1. Restoring from versioned backup
+2. Automated cloning/pushing/pulling of backup repository.
+3. Integration with Django as a management command.
 

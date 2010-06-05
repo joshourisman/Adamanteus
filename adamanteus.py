@@ -108,12 +108,40 @@ class MySQLDumper(Dumper):
         dump_options.append(self.database)
         dump_options.append('--result-file=%s' % output_file)
         call(dump_options)
+
+class PostgresDumper(Dumper):
+    """
+    Sublcass of Dumper for working with PostgreSQL databases.
+    """
+
+    def dump(self):
+        # pg_dump django_influencer -U username -W --file=filename
+
+        # There's apparently no way to pass in a password at the command line,
+        # so looks like we'll just have to leave that out. Will return an error
+        # if the user tries to give a password for a PostgreSQL database dump.
+        if self.password is not None:
+            password_error = """
+PostgreSQL dumper does not support password authentication.
+Please set up a read-only user for backing up your PostgreSQL database, or use a .pgpass file.
+Details on using a .pgpass file can be found here: http://www.postgresql.org/docs/current/interactive/libpq-pgpass.html
+"""
+            raise Exception(password_error)
+        output_file = "%s/%s.out" % (self.path, self.database)
+
+        dump_options = ['pg_dump', self.database]
+        # options get set here
+        if self.username is not None:
+            dump_options.append('-U%s' % string.strip(self.username))
+
+        dump_options.append('--file=%s' % output_file)
+        call(dump_options)
             
 def main():
     usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
                               prog='adamanteus',
-                              version='adamanteus 0.4',
+                              version='adamanteus 0.5',
                               usage=usage)
     p.add_option('--database', '-d', default=None,
                  help="The name of the database to be backed up.")
@@ -130,6 +158,7 @@ def main():
     DUMPERS = {
         'mongodb': MongoDumper,
         'mysql': MySQLDumper,
+        'postgres': PostgresDumper,
         }
 
     if len(arguments) != 1:
