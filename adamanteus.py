@@ -108,6 +108,25 @@ class MySQLDumper(Dumper):
         dump_options.append(self.database)
         dump_options.append('--result-file=%s' % output_file)
         call(dump_options)
+
+class PostgresDumper(Dumper):
+    """
+    Sublcass of Dumper for working with PostgreSQL databases.
+    """
+
+    def dump(self):
+        # pg_dump django_influencer -U username -W --file=filename
+        output_file = "%s/%s.out" % (self.path, self.database)
+
+        dump_options = ['pg_dump', self.database]
+        # options get set here
+        if self.username is not None:
+            dump_options.append('-U %s' % string.strip(self.username))
+        # There's apparently no way to pass in a password at the command line,
+        # so looks like we'll just have to leave that out. Will return an error
+        # if the user tries to give a password for a PostgreSQL database dump.
+        dump_options.append('--file=%s' output_file)
+        call(dump_options)
             
 def main():
     usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
