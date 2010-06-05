@@ -133,10 +133,8 @@ Details on using a .pgpass file can be found here: http://www.postgresql.org/doc
         # options get set here
         if self.username is not None:
             dump_options.append('-U %s' % string.strip(self.username))
-        # There's apparently no way to pass in a password at the command line,
-        # so looks like we'll just have to leave that out. Will return an error
-        # if the user tries to give a password for a PostgreSQL database dump.
-        dump_options.append('--file=%s' output_file)
+
+        dump_options.append('--file=%s' % output_file)
         call(dump_options)
             
 def main():
