@@ -116,6 +116,17 @@ class PostgresDumper(Dumper):
 
     def dump(self):
         # pg_dump django_influencer -U username -W --file=filename
+
+        # There's apparently no way to pass in a password at the command line,
+        # so looks like we'll just have to leave that out. Will return an error
+        # if the user tries to give a password for a PostgreSQL database dump.
+        if self.password is not None:
+            password_error = """
+PostgreSQL dumper does not support password authentication.
+Please set up a read-only user for backing up your PostgreSQL database, or use a .pgpass file.
+Details on using a .pgpass file can be found here: http://www.postgresql.org/docs/current/interactive/libpq-pgpass.html
+"""
+            raise Exception(password_error)
         output_file = "%s/%s.out" % (self.path, self.database)
 
         dump_options = ['pg_dump', self.database]
