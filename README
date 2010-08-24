@@ -12,7 +12,7 @@ Requirements
 ------------
 The following libraries are required::
 
-- mercurial
+- mercurial (1.5.x only; adamanteus <= 0.5.1 does not support mercurial >= 1.6)
 
 The following libraries are optional::
 

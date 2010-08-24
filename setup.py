@@ -23,6 +23,6 @@ setup(name='Adamanteus',
         'Topic :: Utilities',
         ],
       platforms=['any',],
-      requires=['mercurial', 'pymongo',],
+      requires=['mercurial<1.6', 'pymongo',],
       scripts=['adamanteus.py',],)
 
