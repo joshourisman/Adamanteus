@@ -44,14 +44,17 @@ class Dumper(object):
     def store(self):
         status = self.repo.status(unknown=True)
         unknown = status[4]
+        len_unknown = len(unknown)
         missing = status[3]
-
-        if len(unknown):
-            print "Adding %d files to repo..." % len(unknown)
-            self.repo.add(unknown)
-        if len(missing):
-            print "Removing %d missing files from repo..." % len(unknown)
-            self.repo.remove(missing)
+        len_missing = len(missing)
+        workingctx = self.repo[None]
+        
+        if len_unknown:
+            print "Adding %d files to repo..." % len_unknown
+            workingctx.add(unknown)
+        if len_missing:
+            print "Removing %d missing files from repo..." % len_unknown
+            workingctx.remove(missing)
         if len(self.repo.status()[0]) or len(self.repo.status()[1]):
             rev = self.repo.commit()
 
