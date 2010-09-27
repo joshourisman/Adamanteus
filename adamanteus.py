@@ -31,11 +31,14 @@ class Dumper(object):
         except RepoError:
             self.repo = hg.repository(ui.ui(), path=self.path, create=True)
 
-    def __call__(self):
-        self.dump()
-        self.store()
-        if self.mirror is not None:
-            self.push()
+    def __call__(self, action='dump'):
+        if action == 'dump':
+            self.dump()
+            self.store()
+            if self.mirror is not None:
+                self.push()
+        elif action == 'load':
+            self.load()
 
     def dump(self):
         raise NotImplementedError("You must subclass Dumper and define "
@@ -161,7 +164,7 @@ Details on using a .pgpass file can be found here: http://www.postgresql.org/doc
         
             
 def main():
-    usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
+    usage = "usage: %prog BACKEND [action] -d DATABASE [-r repository] [-u username] [-p password]"
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
                               prog='adamanteus',
                               version='adamanteus 0.6',
@@ -186,12 +189,22 @@ def main():
         'postgres': PostgresDumper,
         }
 
-    if len(arguments) != 1:
+    ACTIONS = (
+        'dump',
+        'load',
+        )
+
+    if len(arguments) not in (1, 2):
         p.print_usage()
         print >> sys.stderr, 'You must specify a database backend.'
         return
     else:
         backend = arguments[0]
+        try:
+            action = arguments[1]
+        except IndexError:
+            action = 'dump'
+            
     if backend not in DUMPERS.keys():
         print >> sys.stderr, '%s is not currently a supported database backend.' % backend
         print >> sys.stderr, 'Supported backends include: %s.' % ', '.join(DUMPERS.keys())
@@ -200,9 +213,17 @@ def main():
         print p.print_usage()
         print >> sys.stderr, 'You must specify a database to be backed up.'
         return
+    if action not in ACTIONS:
+        print >> sys.stderr, '%s is not currently a supported action.' % action
+        print >> sys.stderr, 'Supported backends include: %s.' % ', '.join(ACTIONS)
+        return
+    if options.database is None:
+        print p.print_usage()
+        print >> sys.stderr, 'You must specify a database to be backed up.'
+        return
 
     dumper = DUMPERS[backend](backend, options)
-    dumper()
+    dumper(action=action)
     
 if __name__ == '__main__':
     main()
