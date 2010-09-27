@@ -155,7 +155,7 @@ Details on using a .pgpass file can be found here: http://www.postgresql.org/doc
     def load(self):
         # psql -U {user-name} -d {desintation_db} -f {dumpfilename.sql}
 
-        load_options = ['psql', '-d %s' % self.database]
+        load_options = ['psql', '-d%s' % self.database]
         if self.username is not None:
             load_options.append('-U%s' % string.strip(self.username))
 
