@@ -148,6 +148,17 @@ Details on using a .pgpass file can be found here: http://www.postgresql.org/doc
 
         dump_options.append('--file=%s' % output_file)
         call(dump_options)
+
+    def load(self):
+        # psql -U {user-name} -d {desintation_db} -f {dumpfilename.sql}
+
+        load_options = ['psql', '-d %s' % self.database]
+        if self.username is not None:
+            load_options.append('-U%s' % string.strip(self.username))
+
+        load_options.append('--file=%s' % self.import_file)
+        call(load_options)
+        
             
 def main():
     usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
