@@ -176,7 +176,7 @@ def main():
                  help="The password to use with the database.")
     p.add_option('--mirror', '-m', default=None,
                  help="Remote repository to be used as mirror of backup.")
-    p.add_option('--restore-file', '-f', default=None, dest='import_file'
+    p.add_option('--restore-file', '-f', default=None, dest='import_file',
                  help="Archive file to restore database from.")
     options, arguments = p.parse_args()
 
