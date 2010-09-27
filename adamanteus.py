@@ -41,6 +41,10 @@ class Dumper(object):
         raise NotImplementedError("You must subclass Dumper and define "
                                   "your own dump() method.")
 
+    def load(self):
+        raise NotImplementedError("You must subclass Dumper and define "
+                                  "your own load() method.")
+
     def store(self):
         status = self.repo.status(unknown=True)
         unknown = status[4]
