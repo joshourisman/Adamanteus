@@ -19,6 +19,7 @@ class Dumper(object):
         self.username = options.username
         self.password = options.password
         self.mirror = options.mirror
+        self.import_file = options.import_file
         
         if options.repository is not None:
             self.path = options.repository
@@ -31,15 +32,22 @@ class Dumper(object):
         except RepoError:
             self.repo = hg.repository(ui.ui(), path=self.path, create=True)
 
-    def __call__(self):
-        self.dump()
-        self.store()
-        if self.mirror is not None:
-            self.push()
+    def __call__(self, action='dump'):
+        if action == 'dump':
+            self.dump()
+            self.store()
+            if self.mirror is not None:
+                self.push()
+        elif action == 'load':
+            self.load()
 
     def dump(self):
         raise NotImplementedError("You must subclass Dumper and define "
                                   "your own dump() method.")
+
+    def load(self):
+        raise NotImplementedError("You must subclass Dumper and define "
+                                  "your own load() method.")
 
     def store(self):
         status = self.repo.status(unknown=True)
@@ -114,12 +122,12 @@ class MySQLDumper(Dumper):
 
 class PostgresDumper(Dumper):
     """
-    Sublcass of Dumper for working with PostgreSQL databases.
+    Subclass of Dumper for working with PostgreSQL databases.
     """
 
-    def dump(self):
-        # pg_dump {source_db} -U {user-name} --file {dumpfilename.out}
-
+    def __init__(self, backend, options):
+        super(PostgresDumper, self).__init__(backend, options)
+        
         # There's apparently no way to pass in a password at the command line,
         # so looks like we'll just have to leave that out. Will return an error
         # if the user tries to give a password for a PostgreSQL database dump.
@@ -130,6 +138,10 @@ Please set up a read-only user for backing up your PostgreSQL database, or use a
 Details on using a .pgpass file can be found here: http://www.postgresql.org/docs/current/interactive/libpq-pgpass.html
 """
             raise Exception(password_error)
+
+    def dump(self):
+        # pg_dump django_influencer -U username -W --file=filename
+
         output_file = "%s/%s.out" % (self.path, self.database)
 
         dump_options = ['pg_dump', self.database]
@@ -139,9 +151,20 @@ Details on using a .pgpass file can be found here: http://www.postgresql.org/doc
 
         dump_options.append('--file=%s' % output_file)
         call(dump_options)
+
+    def load(self):
+        # psql -U {user-name} -d {desintation_db} -f {dumpfilename.sql}
+
+        load_options = ['psql', '-q', '-d%s' % self.database]
+        if self.username is not None:
+            load_options.append('-U%s' % string.strip(self.username))
+
+        load_options.append('--file=%s' % self.import_file)
+        call(load_options)
+        
             
 def main():
-    usage = "usage: %prog BACKEND -d DATABASE [-r repository] [-u username] [-p password]"
+    usage = "usage: %prog BACKEND [action] -d DATABASE [-r repository] [-u username] [-p password]"
     p = optparse.OptionParser(description=' Backup a database to a mercurial repository',
                               prog='adamanteus',
                               version='adamanteus 0.6',
@@ -156,6 +179,8 @@ def main():
                  help="The password to use with the database.")
     p.add_option('--mirror', '-m', default=None,
                  help="Remote repository to be used as mirror of backup.")
+    p.add_option('--restore-file', '-f', default=None, dest='import_file',
+                 help="Archive file to restore database from.")
     options, arguments = p.parse_args()
 
     DUMPERS = {
@@ -164,12 +189,22 @@ def main():
         'postgres': PostgresDumper,
         }
 
-    if len(arguments) != 1:
+    ACTIONS = (
+        'dump',
+        'load',
+        )
+
+    if len(arguments) not in (1, 2):
         p.print_usage()
         print >> sys.stderr, 'You must specify a database backend.'
         return
     else:
         backend = arguments[0]
+        try:
+            action = arguments[1]
+        except IndexError:
+            action = 'dump'
+            
     if backend not in DUMPERS.keys():
         print >> sys.stderr, '%s is not currently a supported database backend.' % backend
         print >> sys.stderr, 'Supported backends include: %s.' % ', '.join(DUMPERS.keys())
@@ -178,9 +213,17 @@ def main():
         print p.print_usage()
         print >> sys.stderr, 'You must specify a database to be backed up.'
         return
+    if action not in ACTIONS:
+        print >> sys.stderr, '%s is not currently a supported action.' % action
+        print >> sys.stderr, 'Supported backends include: %s.' % ', '.join(ACTIONS)
+        return
+    if options.database is None:
+        print p.print_usage()
+        print >> sys.stderr, 'You must specify a database to be backed up.'
+        return
 
     dumper = DUMPERS[backend](backend, options)
-    dumper()
+    dumper(action=action)
     
 if __name__ == '__main__':
     main()
