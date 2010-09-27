@@ -118,7 +118,7 @@ class PostgresDumper(Dumper):
     """
 
     def dump(self):
-        # pg_dump django_influencer -U username -W --file=filename
+        # pg_dump {source_db} -U {user-name} --file {dumpfilename.out}
 
         # There's apparently no way to pass in a password at the command line,
         # so looks like we'll just have to leave that out. Will return an error
