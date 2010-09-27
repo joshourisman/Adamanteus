@@ -121,9 +121,8 @@ class PostgresDumper(Dumper):
     Sublcass of Dumper for working with PostgreSQL databases.
     """
 
-    def dump(self):
-        # pg_dump django_influencer -U username -W --file=filename
-
+    def __init__(self, *args, **kwargs):
+        super(self, PostgresDumper).__init__(*args, **kwargs)
         # There's apparently no way to pass in a password at the command line,
         # so looks like we'll just have to leave that out. Will return an error
         # if the user tries to give a password for a PostgreSQL database dump.
@@ -134,6 +133,10 @@ Please set up a read-only user for backing up your PostgreSQL database, or use a
 Details on using a .pgpass file can be found here: http://www.postgresql.org/docs/current/interactive/libpq-pgpass.html
 """
             raise Exception(password_error)
+
+    def dump(self):
+        # pg_dump django_influencer -U username -W --file=filename
+
         output_file = "%s/%s.out" % (self.path, self.database)
 
         dump_options = ['pg_dump', self.database]
