@@ -123,6 +123,8 @@ class PostgresDumper(Dumper):
 
     def __init__(self, *args, **kwargs):
         super(self, PostgresDumper).__init__(*args, **kwargs)
+        self.import_file = options.import_file
+        
         # There's apparently no way to pass in a password at the command line,
         # so looks like we'll just have to leave that out. Will return an error
         # if the user tries to give a password for a PostgreSQL database dump.
@@ -163,6 +165,8 @@ def main():
                  help="The password to use with the database.")
     p.add_option('--mirror', '-m', default=None,
                  help="Remote repository to be used as mirror of backup.")
+    p.add_option('--restore-file', '-f', default=None, dest='import_file'
+                 help="Archive file to restore database from.")
     options, arguments = p.parse_args()
 
     DUMPERS = {
