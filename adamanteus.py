@@ -121,8 +121,8 @@ class PostgresDumper(Dumper):
     Subclass of Dumper for working with PostgreSQL databases.
     """
 
-    def __init__(self, *args, **kwargs):
-        super(self, PostgresDumper).__init__(*args, **kwargs)
+    def __init__(self, backend, options):
+        super(PostgresDumper, self).__init__(backend, options)
         self.import_file = options.import_file
         
         # There's apparently no way to pass in a password at the command line,
