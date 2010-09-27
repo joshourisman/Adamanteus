@@ -19,6 +19,7 @@ class Dumper(object):
         self.username = options.username
         self.password = options.password
         self.mirror = options.mirror
+        self.import_file = options.import_file
         
         if options.repository is not None:
             self.path = options.repository
@@ -126,7 +127,6 @@ class PostgresDumper(Dumper):
 
     def __init__(self, backend, options):
         super(PostgresDumper, self).__init__(backend, options)
-        self.import_file = options.import_file
         
         # There's apparently no way to pass in a password at the command line,
         # so looks like we'll just have to leave that out. Will return an error
