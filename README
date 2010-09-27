@@ -20,7 +20,7 @@ The following libraries are optional::
 
 Usage
 -----
-adamanteus BACKEND -d DATABASE [-r repository] [-u username] [-p password] [-m remote_repo]
+adamanteus BACKEND [action] -d DATABASE [-r repository] [-u username] [-p password] [-m remote_repo] [-f input_file]
 
 Currently supported database backends are:
 
@@ -28,9 +28,14 @@ Currently supported database backends are:
 2. MySQL
 3. PostgreSQL
 
+Currently supported actions are:
+1. dump
+2. load[*]_
+
 Future Plans
 ------------
 1. Restoring from versioned backup
 2. Automated cloning/pushing/pulling of backup repository.
 3. Integration with Django as a management command.
 
+.. [*] The load action is currently only implemented for the PostgreSQL database backend. It also requires you to manually specify the specific file to load from and does not yet integrate directly with version control.
