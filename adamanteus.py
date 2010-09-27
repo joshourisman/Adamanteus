@@ -118,7 +118,7 @@ class MySQLDumper(Dumper):
 
 class PostgresDumper(Dumper):
     """
-    Sublcass of Dumper for working with PostgreSQL databases.
+    Subclass of Dumper for working with PostgreSQL databases.
     """
 
     def __init__(self, *args, **kwargs):
